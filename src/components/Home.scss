@@ -325,10 +325,12 @@
                 display: flex;
                 justify-content: left;
                 align-items: center;
-                padding: 8px 0;
-                &:last-child{
+                padding: 18px 0;
+
+                &:last-child {
                   padding-bottom: 0px;
                 }
+
                 span {
                   flex: 1;
                   font-size: 24px;
@@ -1155,6 +1157,8 @@
       padding-left: 33%;
 
       .part-item {
+        margin-bottom: 20px;
+
         &>div strong {
           i {
             width: 150px;

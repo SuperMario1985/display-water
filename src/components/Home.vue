@@ -18,7 +18,7 @@
             </p>
           </div>
           <div class="p2">
-            <h5>西安市 未央区</h5>
+            <h5>北京市 昌平区</h5>
             <h6 v-if="nowWeatherInfo">{{ nowWeatherInfo.text }}</h6>
             <p v-if="threeDaysWeatherInfo">
               {{ threeDaysWeatherInfo[0].tempMin }}~{{
@@ -110,16 +110,6 @@
           <div class="left">
             <h5>水池水量</h5>
             <div class="liquid-fill liquid-fill2">
-              <p>清水池</p>
-              <ve-liquidfill
-                width="100%"
-                height="100%"
-                radius="100%"
-                :data="chartData2"
-                :settings="chartSettings2"
-              ></ve-liquidfill>
-            </div>
-            <div class="liquid-fill liquid-fill2">
               <p>调蓄池</p>
               <ve-liquidfill
                 width="100%"
@@ -129,6 +119,16 @@
                 :settings="chartSettings"
               ></ve-liquidfill>
             </div>
+            <div class="liquid-fill liquid-fill2">
+              <p>清水池</p>
+              <ve-liquidfill
+                width="100%"
+                height="100%"
+                radius="100%"
+                :data="chartData2"
+                :settings="chartSettings2"
+              ></ve-liquidfill>
+            </div>
           </div>
           <div class="right">
             <div class="top">
@@ -136,7 +136,7 @@
               <div class="liquid-info" v-if="swtchInfo">
                 <span>调蓄池液位：{{ swtchInfo.liquidLevel || 0 }}米</span>
                 <span>清水池液位：{{ swtchInfo.liquidLevel2 || 0 }}米</span>
-                <span>涌泉池液位：{{ swtchInfo.liquidLevel3 || 0 }}米</span>
+                <span>景观水池液位：{{ swtchInfo.liquidLevel3 || 0 }}米</span>
               </div>
             </div>
             <div class="center">
@@ -144,24 +144,18 @@
               <div class="btn-info">
                 <div class="btn-box">
                   <i
-                    :class="{ active: ownerConfigPageStatus['V1000.6'] }"
-                    @click="remoteWritingList('V1000.6', 1)"
-                    >场地冲洗</i
-                  >
-                  <br />
-                  <i
-                    :class="{ active: ownerConfigPageStatus['V1000.5'] }"
-                    @click="remoteWritingList('V1000.5', 1)"
-                    >雨水洗车</i
-                  >
-                </div>
-                <div class="btn-box">
-                  <i
                     :class="{ active: ownerConfigPageStatus['V1000.4'] }"
                     @click="remoteWritingList('V1000.4', 1)"
                     >绿化浇灌</i
                   >
                   <br />
+                  <i
+                    :class="{ active: ownerConfigPageStatus['V1000.6'] }"
+                    @click="remoteWritingList('V1000.6', 1)"
+                    >场地冲洗</i
+                  >
+                </div>
+                <div class="btn-box">
                   <i
                     :class="{ active: ownerConfigPageStatus['V1000.7'] }"
                     @click="remoteWritingList('V1000.7', 1)"
@@ -178,19 +172,17 @@
                 <h5>水质检测</h5>
                 <div class="btn-info">
                   <div class="btn-box">
+                    <!-- TODO 等待点位 -->
                     <i
                       :class="{ active: ownerConfigPageStatus['V1002.6'] }"
-                      @click="remoteWritingList('V1002.6', 1)"
-                      >一键反冲洗</i
-                    >
-                    <i
-                      :class="{ active: ownerConfigPageStatus['V1002.7'] }"
-                      @click="remoteWritingList('V1002.7', 1)"
-                      >一键水利用</i
+                      @click="remoteWriting('V1002.6', 1)"
+                      >景观水循环泵</i
                     >
                   </div>
                   <div class="btn-box">
-                    <i class="stop" @click="stopWaterCheck">停止</i>
+                    <i class="stop" @click="remoteWriting('V1002.6', 0)"
+                      >停止</i
+                    >
                     <i @click="goToConfig">配置参数</i>
                   </div>
                 </div>
@@ -269,14 +261,14 @@
               <div class="device-box">
                 <div class="device-item">
                   <div class="device-state">
-                    <span>清水池回用泵</span>
-                    <strong v-if="swtchInfo.reusePumpOperation">运行</strong>
-                    <strong class="error" v-else-if="swtchInfo.error1"
+                    <span>提升泵</span>
+                    <strong v-if="swtchInfo.reusePumpOperation2">运行</strong>
+                    <strong class="error" v-else-if="swtchInfo.error2"
                       >故障</strong
                     >
                     <strong v-else>停机</strong>
                     <img
-                      v-if="swtchInfo.reusePumpOperation"
+                      v-if="swtchInfo.reusePumpOperation2"
                       src="../assets/images/config/btn2-active.gif"
                       alt=""
                     />
@@ -287,25 +279,7 @@
                     />
                   </div>
                   <div class="device-state">
-                    <span>清水池提升泵</span>
-                    <strong v-if="swtchInfo.reusePumpOperation8">运行</strong>
-                    <strong class="error" v-else-if="swtchInfo.error8"
-                      >故障</strong
-                    >
-                    <strong v-else>停机</strong>
-                    <img
-                      v-if="swtchInfo.reusePumpOperation8"
-                      src="../assets/images/config/btn2-active.gif"
-                      alt=""
-                    />
-                    <img
-                      v-else
-                      src="../assets/images/config/btn-closed.png"
-                      alt=""
-                    />
-                  </div>
-                  <div class="device-state">
-                    <span>调蓄池回用泵</span>
+                    <span>供水泵</span>
                     <strong v-if="swtchInfo.reusePumpOperation9">运行</strong>
                     <strong class="error" v-else-if="swtchInfo.error9"
                       >故障</strong
@@ -323,14 +297,14 @@
                     />
                   </div>
                   <div class="device-state">
-                    <span>调蓄池排空泵</span>
-                    <strong v-if="swtchInfo.reusePumpOperation2">运行</strong>
-                    <strong class="error" v-else-if="swtchInfo.error2"
+                    <span>循环泵</span>
+                    <strong v-if="swtchInfo.reusePumpOperation8">运行</strong>
+                    <strong class="error" v-else-if="swtchInfo.error8"
                       >故障</strong
                     >
                     <strong v-else>停机</strong>
                     <img
-                      v-if="swtchInfo.reusePumpOperation2"
+                      v-if="swtchInfo.reusePumpOperation8"
                       src="../assets/images/config/btn2-active.gif"
                       alt=""
                     />
@@ -342,6 +316,27 @@
                   </div>
                 </div>
                 <div class="device-item">
+                  <div class="device-state">
+                    <span>补水阀</span>
+                    <strong class="error" v-if="swtchInfo.error3">故障</strong>
+                    <strong v-else-if="swtchInfo.reusePumpOperation4"
+                      >开位</strong
+                    >
+                    <strong v-else-if="swtchInfo.reusePumpOperation5"
+                      >关位</strong
+                    >
+                    <strong v-else>关闭</strong>
+                    <img
+                      v-if="swtchInfo.reusePumpOperation4"
+                      src="../assets/images/config/btn2-active.gif"
+                      alt=""
+                    />
+                    <img
+                      v-else
+                      src="../assets/images/config/btn-closed.png"
+                      alt=""
+                    />
+                  </div>
                   <div class="device-state">
                     <span>过滤器</span>
                     <strong v-if="swtchInfo.reusePumpOperation3">运行</strong>
@@ -363,47 +358,6 @@
                     <strong v-else>停机</strong>
                     <img
                       v-if="swtchInfo.reusePumpOperation7"
-                      src="../assets/images/config/btn2-active.gif"
-                      alt=""
-                    />
-                    <img
-                      v-else
-                      src="../assets/images/config/btn-closed.png"
-                      alt=""
-                    />
-                  </div>
-                  <div class="device-state">
-                    <span>过滤阀</span>
-                    <strong class="error" v-if="swtchInfo.error12">故障</strong>
-                    <strong v-else-if="swtchInfo.reusePumpOperation12"
-                      >开位</strong
-                    >
-                    <strong v-else-if="swtchInfo.reusePumpOperation13"
-                      >关位</strong
-                    >
-                    <img
-                      v-if="swtchInfo.reusePumpOperation12"
-                      src="../assets/images/config/btn2-active.gif"
-                      alt=""
-                    />
-                    <img
-                      v-else
-                      src="../assets/images/config/btn-closed.png"
-                      alt=""
-                    />
-                  </div>
-
-                  <div class="device-state">
-                    <span>补水阀</span>
-                    <strong class="error" v-if="swtchInfo.error3">故障</strong>
-                    <strong v-else-if="swtchInfo.reusePumpOperation4"
-                      >开位</strong
-                    >
-                    <strong v-else-if="swtchInfo.reusePumpOperation5"
-                      >关位</strong
-                    >
-                    <img
-                      v-if="swtchInfo.reusePumpOperation4"
                       src="../assets/images/config/btn2-active.gif"
                       alt=""
                     />
@@ -484,7 +438,7 @@
               </strong>
             </div>
             <div>
-              <p>涌泉池液位上限:</p>
+              <p>景观水池液位上限:</p>
               <strong>
                 <i @click="configFlur(6)">{{ swtchInfo.liquidUp3 }}</i>
                 <span>M</span>
@@ -507,7 +461,7 @@
               </strong>
             </div>
             <div>
-              <p>涌泉池液位下限:</p>
+              <p>景观水池液位下限:</p>
               <strong>
                 <i @click="configFlur(5)">{{ swtchInfo.liquidDown3 }}</i>
                 <span>M</span>
@@ -515,16 +469,6 @@
             </div>
           </div>
           <div class="header">
-            <i
-              :class="{ active: !isShowBtns }"
-              @click="remoteWriting('V1000.0', 1)"
-              >远程</i
-            >
-            <i
-              :class="{ active: isShowBtns }"
-              @click="remoteWriting('V1000.0', 0)"
-              >就地</i
-            >
             <i
               :class="{ active: !isSingleContral }"
               @click="remoteWriting('V1000.1', 1)"
@@ -538,105 +482,26 @@
           </div>
           <div class="config-box">
             <div class="config-item">
-              <h6>回用泵</h6>
+              <h6>提升泵</h6>
               <div v-show="isShowBtns">
                 <i
-                  :class="{ active: swtchInfo.reusePumpOperation }"
+                  :class="{ active: swtchInfo.reusePumpOperation2 }"
                   class="button btn-open"
-                  @click="remoteWriting('V1001.0', 1)"
+                  @click="remoteWriting('V1001.4', 1)"
                   >启动</i
                 >
               </div>
               <div v-show="isShowBtns">
-                <i class="button btn-close" @click="remoteWriting('V1001.0', 0)"
-                  >停止</i
-                >
-              </div>
-              <div class="flex">
-                <div>
-                  <p v-if="swtchInfo.reusePumpOperation">1#运行</p>
-                  <p class="error" v-else-if="swtchInfo.error1">1#故障</p>
-                  <p v-else>1#停机</p>
-                  <img
-                    v-if="swtchInfo.reusePumpOperation"
-                    src="../assets/images/config/btn2-active.gif"
-                    alt=""
-                  />
-                  <img
-                    v-else
-                    src="../assets/images/config/btn-closed.png"
-                    alt=""
-                  />
-                </div>
-                <div>
-                  <p v-if="swtchInfo.reusePumpOperation0">2#运行</p>
-                  <p class="error" v-else-if="swtchInfo.error0">2#故障</p>
-                  <p v-else>2#停机</p>
-                  <img
-                    v-if="swtchInfo.reusePumpOperation0"
-                    src="../assets/images/config/btn2-active.gif"
-                    alt=""
-                  />
-                  <img
-                    v-else
-                    src="../assets/images/config/btn-closed.png"
-                    alt=""
-                  />
-                </div>
-              </div>
-            </div>
-            <div class="config-item" v-if="false">
-              <h6 class="opacity">回用泵2</h6>
-              <div v-show="isShowBtns" class="opacity">
-                <i
-                  :class="{ active: swtchInfo.reusePumpOperation0 }"
-                  class="button btn-open"
-                  @click="remoteWriting('V1001.1', 1)"
-                  >启动</i
-                >
-              </div>
-              <div v-show="isShowBtns" class="opacity">
-                <i class="button btn-close" @click="remoteWriting('V1001.1', 0)"
+                <i class="button btn-close" @click="remoteWriting('V1001.4', 0)"
                   >停止</i
                 >
               </div>
               <div>
-                <p v-if="swtchInfo.reusePumpOperation0">运行</p>
-                <p class="error" v-else-if="swtchInfo.error0">故障</p>
-                <p v-else>2#停机</p>
-                <img
-                  v-if="swtchInfo.reusePumpOperation0"
-                  src="../assets/images/config/btn2-active.gif"
-                  alt=""
-                />
-                <img
-                  v-else
-                  src="../assets/images/config/btn-closed.png"
-                  alt=""
-                />
-              </div>
-            </div>
-            <div class="config-item">
-              <h6>清水池提升泵</h6>
-              <div v-show="isShowBtns">
-                <i
-                  :class="{ active: swtchInfo.reusePumpOperation8 }"
-                  class="button btn-open"
-                  @click="remoteWriting('V1001.2', 1)"
-                  >启动</i
-                >
-              </div>
-              <div v-show="isShowBtns">
-                <i class="button btn-close" @click="remoteWriting('V1001.2', 0)"
-                  >停止</i
-                >
-              </div>
-              <div>
-                <p v-if="swtchInfo.reusePumpOperation8">运行</p>
-                <p class="error" v-else-if="swtchInfo.error8">故障</p>
+                <p v-if="swtchInfo.reusePumpOperation2">运行</p>
+                <p class="error" v-else-if="swtchInfo.error2">故障</p>
                 <p v-else>停机</p>
                 <img
-                  v-if="swtchInfo.reusePumpOperation8"
+                  v-if="swtchInfo.reusePumpOperation2"
                   src="../assets/images/config/btn2-active.gif"
                   alt=""
                 />
@@ -648,7 +513,7 @@
               </div>
             </div>
             <div class="config-item">
-              <h6>调蓄池回用泵</h6>
+              <h6>供水泵</h6>
               <div v-show="isShowBtns">
                 <i
                   :class="{ active: swtchInfo.reusePumpOperation9 }"
@@ -679,26 +544,26 @@
               </div>
             </div>
             <div class="config-item">
-              <h6>调蓄池排空泵</h6>
+              <h6>循环泵</h6>
               <div v-show="isShowBtns">
                 <i
-                  :class="{ active: swtchInfo.reusePumpOperation2 }"
+                  :class="{ active: swtchInfo.reusePumpOperation8 }"
                   class="button btn-open"
-                  @click="remoteWriting('V1001.4', 1)"
+                  @click="remoteWriting('V1001.2', 1)"
                   >启动</i
                 >
               </div>
               <div v-show="isShowBtns">
-                <i class="button btn-close" @click="remoteWriting('V1001.4', 0)"
+                <i class="button btn-close" @click="remoteWriting('V1001.2', 0)"
                   >停止</i
                 >
               </div>
               <div>
-                <p v-if="swtchInfo.reusePumpOperation2">运行</p>
-                <p class="error" v-else-if="swtchInfo.error2">故障</p>
+                <p v-if="swtchInfo.reusePumpOperation8">运行</p>
+                <p class="error" v-else-if="swtchInfo.error8">故障</p>
                 <p v-else>停机</p>
                 <img
-                  v-if="swtchInfo.reusePumpOperation2"
+                  v-if="swtchInfo.reusePumpOperation8"
                   src="../assets/images/config/btn2-active.gif"
                   alt=""
                 />
@@ -709,32 +574,63 @@
                 />
               </div>
             </div>
-            <div class="config-item" v-if="false">
-              <h6>调储泵</h6>
+            <div class="config-item">
+              <h6>绿化浇灌阀</h6>
               <div v-show="isShowBtns">
                 <i
-                  :class="{ active: swtchInfo.reusePumpOperation6 }"
+                  :class="{ active: swtchInfo.reusePumpOperation10 }"
                   class="button btn-open"
-                  @click="remoteWriting('V1001.5', 1)"
-                  >启动</i
+                  @click="remoteWriting('V1002.1', 1)"
+                  >打开</i
                 >
               </div>
               <div v-show="isShowBtns">
-                <i class="button btn-close" @click="remoteWriting('V1001.5', 0)"
-                  >停止</i
+                <i class="button btn-close" @click="remoteWriting('V1002.1', 0)"
+                  >关闭</i
                 >
               </div>
               <div>
-                <p v-if="swtchInfo.reusePumpOperation6">运行</p>
-                <p class="error" v-else-if="swtchInfo.error5">故障</p>
-                <p v-else>停机</p>
+                <p class="error" v-if="swtchInfo.error10">故障</p>
+                <p v-else-if="swtchInfo.reusePumpOperation10">开位</p>
+                <p v-else-if="swtchInfo.reusePumpOperation11">关位</p>
                 <img
-                  v-if="swtchInfo.reusePumpOperation6"
+                  v-if="swtchInfo.reusePumpOperation10"
                   src="../assets/images/config/btn2-active.gif"
                   alt=""
                 />
                 <img
-                  v-else
+                  v-if="swtchInfo.reusePumpOperation11"
+                  src="../assets/images/config/btn-closed.png"
+                  alt=""
+                />
+              </div>
+            </div>
+            <div class="config-item">
+              <h6>景观补水阀</h6>
+              <div v-show="isShowBtns">
+                <i
+                  :class="{ active: swtchInfo.reusePumpOperation4 }"
+                  class="button btn-open"
+                  @click="remoteWriting('V1002.2', 1)"
+                  >打开</i
+                >
+              </div>
+              <div v-show="isShowBtns">
+                <i class="button btn-close" @click="remoteWriting('V1002.2', 0)"
+                  >关闭</i
+                >
+              </div>
+              <div>
+                <p class="error" v-if="swtchInfo.error3">故障</p>
+                <p v-else-if="swtchInfo.reusePumpOperation4">开位</p>
+                <p v-else-if="swtchInfo.reusePumpOperation5">关位</p>
+                <img
+                  v-if="swtchInfo.reusePumpOperation4"
+                  src="../assets/images/config/btn2-active.gif"
+                  alt=""
+                />
+                <img
+                  v-if="swtchInfo.reusePumpOperation5"
                   src="../assets/images/config/btn-closed.png"
                   alt=""
                 />
@@ -800,132 +696,6 @@
                 />
               </div>
             </div>
-            <div class="config-item">
-              <h6>过滤阀</h6>
-              <div v-show="isShowBtns">
-                <i
-                  :class="{ active: swtchInfo.reusePumpOperation12 }"
-                  class="button btn-open"
-                  @click="remoteWriting('V1002.0', 1)"
-                  >打开</i
-                >
-              </div>
-              <div v-show="isShowBtns">
-                <i class="button btn-close" @click="remoteWriting('V1002.0', 0)"
-                  >关闭</i
-                >
-              </div>
-              <div>
-                <p class="error" v-if="swtchInfo.error12">故障</p>
-                <p v-else-if="swtchInfo.reusePumpOperation12">开位</p>
-                <p v-else-if="swtchInfo.reusePumpOperation13">关位</p>
-                <img
-                  v-if="swtchInfo.reusePumpOperation12"
-                  src="../assets/images/config/btn2-active.gif"
-                  alt=""
-                />
-                <img
-                  v-if="swtchInfo.reusePumpOperation13"
-                  src="../assets/images/config/btn-closed.png"
-                  alt=""
-                />
-              </div>
-            </div>
-            <div class="config-item">
-              <h6>反洗阀</h6>
-              <div v-show="isShowBtns">
-                <i
-                  :class="{ active: swtchInfo.reusePumpOperation10 }"
-                  class="button btn-open"
-                  @click="remoteWriting('V1002.1', 1)"
-                  >打开</i
-                >
-              </div>
-              <div v-show="isShowBtns">
-                <i class="button btn-close" @click="remoteWriting('V1002.1', 0)"
-                  >关闭</i
-                >
-              </div>
-              <div>
-                <p class="error" v-if="swtchInfo.error10">故障</p>
-                <p v-else-if="swtchInfo.reusePumpOperation10">开位</p>
-                <p v-else-if="swtchInfo.reusePumpOperation11">关位</p>
-                <img
-                  v-if="swtchInfo.reusePumpOperation10"
-                  src="../assets/images/config/btn2-active.gif"
-                  alt=""
-                />
-                <img
-                  v-if="swtchInfo.reusePumpOperation11"
-                  src="../assets/images/config/btn-closed.png"
-                  alt=""
-                />
-              </div>
-            </div>
-            <div class="config-item">
-              <h6>补水阀</h6>
-              <div v-show="isShowBtns">
-                <i
-                  :class="{ active: swtchInfo.reusePumpOperation4 }"
-                  class="button btn-open"
-                  @click="remoteWriting('V1002.2', 1)"
-                  >打开</i
-                >
-              </div>
-              <div v-show="isShowBtns">
-                <i class="button btn-close" @click="remoteWriting('V1002.2', 0)"
-                  >关闭</i
-                >
-              </div>
-              <div>
-                <p class="error" v-if="swtchInfo.error3">故障</p>
-                <p v-else-if="swtchInfo.reusePumpOperation4">开位</p>
-                <p v-else-if="swtchInfo.reusePumpOperation5">关位</p>
-                <img
-                  v-if="swtchInfo.reusePumpOperation4"
-                  src="../assets/images/config/btn2-active.gif"
-                  alt=""
-                />
-                <img
-                  v-if="swtchInfo.reusePumpOperation5"
-                  src="../assets/images/config/btn-closed.png"
-                  alt=""
-                />
-              </div>
-            </div>
-          </div>
-          <div class="header" v-if="false">
-            <i
-              :class="{ active: !isSingleContral }"
-              @click="remoteWriting('V1000.1', 1)"
-              >联动控制</i
-            >
-            <i
-              :class="{ active: isSingleContral }"
-              @click="remoteWriting('V1000.1', 0)"
-              >单独控制</i
-            >
-            <!-- <i
-              v-if="
-                swtchInfo.error1 ||
-                swtchInfo.error2 ||
-                swtchInfo.error3 ||
-                swtchInfo.error5
-              "
-              @touchstart="remoteWriting('V1000.2', 1)"
-              @touchend="remoteWriting('V1000.2', 0)"
-              >故障复位</i
-            > -->
-            <i
-              v-if="
-                swtchInfo.error1 ||
-                swtchInfo.error2 ||
-                swtchInfo.error3 ||
-                swtchInfo.error5
-              "
-              @touchstart="remoteWriting('V1000.2', 1)"
-              >故障复位</i
-            >
           </div>
         </div>
       </div>
@@ -1159,7 +929,7 @@ export default {
             label: {
               formatter(options) {
                 const { seriesName, value } = options;
-                return `${(value * 108).toFixed(1)}m³`;
+                return `${(value * 99).toFixed(1)}m³`;
               },
               fontSize: 15,
               color: "green",
@@ -1199,7 +969,7 @@ export default {
             label: {
               formatter(options) {
                 const { seriesName, value } = options;
-                return `${(value * 6.75).toFixed(1)}m³`;
+                return `${(value * 15).toFixed(1)}m³`;
               },
               fontSize: 15,
               color: "green",
@@ -1344,6 +1114,47 @@ export default {
       let that = this;
       httpService.getInfo(function (response) {
         if (response && response.data) {
+          // 提升泵
+          that.swtchInfo.reusePumpOperation2 =
+            response.data["V1004.5"] === "1" ? true : false;
+          that.swtchInfo.error2 =
+            response.data["V1004.6"] === "1" ? true : false;
+
+          // 供水泵
+          that.swtchInfo.reusePumpOperation9 =
+            response.data["V1004.7"] === "1" ? true : false;
+          that.swtchInfo.error9 =
+            response.data["V1005.0"] === "1" ? true : false;
+
+          // 循环泵
+          that.swtchInfo.reusePumpOperation8 =
+            response.data["V1005.1"] === "1" ? true : false;
+          that.swtchInfo.error8 =
+            response.data["V1005.2"] === "1" ? true : false;
+
+          // 反洗阀
+          that.swtchInfo.reusePumpOperation10 =
+            response.data["V1006.3"] === "1" ? true : false;
+          that.swtchInfo.reusePumpOperation11 =
+            response.data["V1006.4"] === "1" ? true : false;
+          that.swtchInfo.error10 =
+            response.data["V1006.5"] === "1" ? true : false;
+
+          // 景观补水阀
+          that.swtchInfo.reusePumpOperation4 =
+            response.data["V1006.6"] === "1" ? true : false;
+          that.swtchInfo.reusePumpOperation5 =
+            response.data["V1006.7"] === "1" ? true : false;
+          that.swtchInfo.error3 =
+            response.data["V1007.0"] === "1" ? true : false;
+
+          // 过滤器
+          that.swtchInfo.reusePumpOperation3 =
+            response.data["V1005.3"] === "1" ? true : false;
+          // 消毒灯
+          that.swtchInfo.reusePumpOperation7 =
+            response.data["V1005.4"] === "1" ? true : false;
+
           // 回用泵1
           that.swtchInfo.reusePumpOperation =
             response.data["V1004.1"] === "1" ? true : false;
@@ -1356,22 +1167,6 @@ export default {
           that.swtchInfo.error0 =
             response.data["V1004.4"] === "1" ? true : false;
 
-          // 清水池提升泵
-          that.swtchInfo.reusePumpOperation8 =
-            response.data["V1004.5"] === "1" ? true : false;
-          that.swtchInfo.error8 =
-            response.data["V1004.6"] === "1" ? true : false;
-
-          // 调蓄池排空泵
-          that.swtchInfo.reusePumpOperation2 =
-            response.data["V1005.1"] === "1" ? true : false;
-          that.swtchInfo.error2 =
-            response.data["V1005.2"] === "1" ? true : false;
-
-          // 过滤器
-          that.swtchInfo.reusePumpOperation3 =
-            response.data["V1005.3"] === "1" ? true : false;
-
           // 过滤阀
           that.swtchInfo.reusePumpOperation12 =
             response.data["V1006.0"] === "1" ? true : false;
@@ -1380,35 +1175,9 @@ export default {
           that.swtchInfo.error12 =
             response.data["V1006.2"] === "1" ? true : false;
 
-          // 反洗阀
-          that.swtchInfo.reusePumpOperation10 =
-            response.data["V1006.3"] === "1" ? true : false;
-          that.swtchInfo.reusePumpOperation11 =
-            response.data["V1006.4"] === "1" ? true : false;
-          that.swtchInfo.error10 =
-            response.data["V1006.5"] === "1" ? true : false;
-
-          // 补水阀
-          that.swtchInfo.reusePumpOperation4 =
-            response.data["V1006.6"] === "1" ? true : false;
-          that.swtchInfo.reusePumpOperation5 =
-            response.data["V1006.7"] === "1" ? true : false;
-          that.swtchInfo.error3 =
-            response.data["V1007.0"] === "1" ? true : false;
-
           // 调蓄泵
           that.swtchInfo.reusePumpOperation6 =
             response.data["V1005.2"] === "1" ? true : false;
-
-          // 消毒灯
-          that.swtchInfo.reusePumpOperation7 =
-            response.data["V1005.4"] === "1" ? true : false;
-
-          // 调蓄池回用泵
-          that.swtchInfo.reusePumpOperation9 =
-            response.data["V1004.7"] === "1" ? true : false;
-          that.swtchInfo.error9 =
-            response.data["V1005.0"] === "1" ? true : false;
 
           // 调蓄泵故障
           that.swtchInfo.error5 =
@@ -1419,7 +1188,7 @@ export default {
           // 调蓄池
           that.swtchInfo.liquidLevel = response.data["VD1008"];
           let test = response.data["VD1020"];
-          that.chartData.rows[0].percent = Number(test) / 108;
+          that.chartData.rows[0].percent = Number(test) / 99;
           that.swtchInfo.frequency = response.data["VD1008"];
           that.swtchInfo.liquidDown = response.data["VD904"];
           that.swtchInfo.liquidUp = response.data["VD900"];
@@ -1427,13 +1196,12 @@ export default {
           // 清水池
           that.swtchInfo.liquidLevel2 = response.data["VD1012"];
           let test2 = response.data["VD1024"];
-          that.chartData2.rows[0].percent = Number(test2) / 6.75;
+          that.chartData2.rows[0].percent = Number(test2) / 15;
           that.swtchInfo.frequency2 = response.data["VD1012"];
-
           that.swtchInfo.liquidDown2 = response.data["VD912"];
           that.swtchInfo.liquidUp2 = response.data["VD908"];
 
-          // 涌泉池
+          // 景观水池
           that.swtchInfo.liquidLevel3 = response.data["VD1016"];
 
           that.swtchInfo.liquidDown3 = response.data["VD920"];
@@ -1702,10 +1470,6 @@ export default {
       if (this.ownerConfigPageStatus["V1000.4"]) {
         this.remoteWriting("V1000.4", 0);
         this.ownerConfigPageStatus["V1000.4"] = false;
-      }
-      if (this.ownerConfigPageStatus["V1000.5"]) {
-        this.remoteWriting("V1000.5", 0);
-        this.ownerConfigPageStatus["V1000.5"] = false;
       }
       if (this.ownerConfigPageStatus["V1000.6"]) {
         this.remoteWriting("V1000.6", 0);
