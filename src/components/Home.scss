@@ -666,7 +666,8 @@
             .btn-info {
               padding-top: 26px;
               display: flex;
-
+              justify-content: center;
+              align-items: center;
               .btn-box {
                 flex: 1;
                 justify-content: center;
@@ -682,7 +683,7 @@
                   background: #8DE6FF;
                   border-radius: 38px;
                   border: 4px solid #55FFFB;
-                  margin: 10px 0;
+                  margin: 10px 0px;
 
                   &.active {
                     border-radius: 38px;
@@ -699,7 +700,15 @@
                   }
                 }
               }
+              .btn-box2 {
+                flex: 2;
+  
+                i {
+                  margin: 6px 30px;
+                }
+              }
             }
+            
           }
 
           &>.bottom {
@@ -732,7 +741,7 @@
                 i {
                   display: inline-block;
                   text-align: center;
-                  width: 140px;
+                  width: 156px;
                   height: 38px;
                   line-height: 32px;
                   background: #8DE6FF;
@@ -1186,6 +1195,11 @@
         &.active {
           border-radius: 30px;
           box-shadow: 0px 0px 29px 3px rgba(0, 255, 252, 1);
+        }
+        &.reset {
+          border-radius: 30px;
+          box-shadow: 0px 0px 29px 3px #b6f705;
+          // color: #b6f705;
         }
       }
     }

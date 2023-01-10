@@ -140,50 +140,71 @@
               </div>
             </div>
             <div class="center">
-              <h5>雨水回收</h5>
+              <h5>功能选择</h5>
               <div class="btn-info">
-                <div class="btn-box">
+                <div class="btn-box btn-box2">
                   <i
                     :class="{ active: ownerConfigPageStatus['V1000.4'] }"
-                    @click="remoteWritingList('V1000.4', 1)"
+                    @click="
+                      remoteWriting('V1000.4', 1);
+                      ownerConfigPageStatus['V1000.4'] = true;
+                    "
                     >绿化浇灌</i
+                  >
+                  <i
+                    :class="{ active: ownerConfigPageStatus['V1000.7'] }"
+                    @click="
+                      remoteWriting('V1000.7', 1);
+                      ownerConfigPageStatus['V1000.7'] = true;
+                    "
+                    >景观补水</i
                   >
                   <br />
                   <i
-                    :class="{ active: ownerConfigPageStatus['V1000.6'] }"
-                    @click="remoteWritingList('V1000.6', 1)"
-                    >场地冲洗</i
+                    class="stop"
+                    @click="
+                      remoteWriting('V1000.4', 0);
+                      ownerConfigPageStatus['V1000.4'] = false;
+                    "
+                    >停止</i
                   >
-                </div>
-                <div class="btn-box">
                   <i
-                    :class="{ active: ownerConfigPageStatus['V1000.7'] }"
-                    @click="remoteWritingList('V1000.7', 1)"
-                    >景观补水</i
+                    class="stop"
+                    @click="
+                      remoteWriting('V1000.7', 0);
+                      ownerConfigPageStatus['V1000.7'] = false;
+                    "
+                    >停止</i
                   >
                 </div>
                 <div class="btn-box">
-                  <i class="stop" @click="stopRainBack">停止</i>
+                  <i @click="goToConfig">配置参数</i>
                 </div>
               </div>
             </div>
             <div class="bottom">
               <div class="left">
-                <h5>水质检测</h5>
+                <h5>景观水模式控制</h5>
                 <div class="btn-info">
                   <div class="btn-box">
-                    <!-- TODO 等待点位 -->
                     <i
-                      :class="{ active: ownerConfigPageStatus['V1002.6'] }"
-                      @click="remoteWriting('V1002.6', 1)"
-                      >景观水循环泵</i
+                      :class="{ active: swtchInfo.reusePumpOperation8 }"
+                      @click="
+                        remoteWriting('V1001.2', 1);
+                        swtchInfo.reusePumpOperation8 = true;
+                      "
+                      >景观水循环泵启动</i
                     >
                   </div>
                   <div class="btn-box">
-                    <i class="stop" @click="remoteWriting('V1002.6', 0)"
+                    <i
+                      class="stop"
+                      @click="
+                        remoteWriting('V1001.2', 0);
+                        swtchInfo.reusePumpOperation8 = false;
+                      "
                       >停止</i
                     >
-                    <i @click="goToConfig">配置参数</i>
                   </div>
                 </div>
               </div>
@@ -214,7 +235,7 @@
                           alt=""
                         />启用时间
                       </h6>
-                      <p>2022年11月10日</p>
+                      <p>2023年02月15日</p>
                     </div>
                     <div class="status-item">
                       <h6>
@@ -405,7 +426,7 @@
                         alt=""
                       />启用时间
                     </h6>
-                    <p>2022年11月10日</p>
+                    <p>2023年02月15日</p>
                   </div>
                   <div class="status-item">
                     <h6>
@@ -470,14 +491,30 @@
           </div>
           <div class="header">
             <i
+              :class="{ active: !isShowBtns }"
+              @click="remoteWriting('V1000.0', 1)"
+              >远程</i
+            >
+            <i
+              :class="{ active: isShowBtns }"
+              @click="remoteWriting('V1000.0', 0)"
+              >就地</i
+            >
+            <i
               :class="{ active: !isSingleContral }"
               @click="remoteWriting('V1000.1', 1)"
-              >联动控制</i
+              >自动控制</i
             >
             <i
               :class="{ active: isSingleContral }"
               @click="remoteWriting('V1000.1', 0)"
               >单独控制</i
+            >
+            <i
+              :class="{ active: isSingleContral }"
+              class="reset"
+              @click="remoteWriting('V1000.2', 1)"
+              >故障复位</i
             >
           </div>
           <div class="config-box">
@@ -886,8 +923,8 @@ export default {
         "V1000.5": false,
         "V1000.7": false,
         "V1002.6": false,
-        "V1002.7": false,
       },
+
       // 密码验证框
       dialogAccessVisible: false,
       password: "",
@@ -929,7 +966,7 @@ export default {
             label: {
               formatter(options) {
                 const { seriesName, value } = options;
-                return `${(value * 99).toFixed(1)}m³`;
+                return `${(value * 128.7).toFixed(1)}m³`;
               },
               fontSize: 15,
               color: "green",
@@ -969,7 +1006,7 @@ export default {
             label: {
               formatter(options) {
                 const { seriesName, value } = options;
-                return `${(value * 15).toFixed(1)}m³`;
+                return `${(value * 45).toFixed(1)}m³`;
               },
               fontSize: 15,
               color: "green",
@@ -1188,7 +1225,7 @@ export default {
           // 调蓄池
           that.swtchInfo.liquidLevel = response.data["VD1008"];
           let test = response.data["VD1020"];
-          that.chartData.rows[0].percent = Number(test) / 99;
+          that.chartData.rows[0].percent = Number(test) / 128.7;
           that.swtchInfo.frequency = response.data["VD1008"];
           that.swtchInfo.liquidDown = response.data["VD904"];
           that.swtchInfo.liquidUp = response.data["VD900"];
@@ -1196,7 +1233,7 @@ export default {
           // 清水池
           that.swtchInfo.liquidLevel2 = response.data["VD1012"];
           let test2 = response.data["VD1024"];
-          that.chartData2.rows[0].percent = Number(test2) / 15;
+          that.chartData2.rows[0].percent = Number(test2) / 45;
           that.swtchInfo.frequency2 = response.data["VD1012"];
           that.swtchInfo.liquidDown2 = response.data["VD912"];
           that.swtchInfo.liquidUp2 = response.data["VD908"];
@@ -1417,7 +1454,7 @@ export default {
       this.timeoutToken = setTimeout(() => {
         console.log("回到屏保");
         this.loginInfo.status = 1;
-      }, 180000);
+      }, 1800000);
       console.log("开启新的定时器");
     },
     // 去配置页
@@ -1478,16 +1515,6 @@ export default {
       if (this.ownerConfigPageStatus["V1000.7"]) {
         this.remoteWriting("V1000.7", 0);
         this.ownerConfigPageStatus["V1000.7"] = false;
-      }
-    },
-    stopWaterCheck() {
-      if (this.ownerConfigPageStatus["V1002.6"]) {
-        this.remoteWriting("V1002.6", 0);
-        this.ownerConfigPageStatus["V1002.6"] = false;
-      }
-      if (this.ownerConfigPageStatus["V1002.7"]) {
-        this.remoteWriting("V1002.7", 0);
-        this.ownerConfigPageStatus["V1002.7"] = false;
       }
     },
     // 液位设定
