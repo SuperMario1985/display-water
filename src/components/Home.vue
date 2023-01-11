@@ -335,6 +335,27 @@
                       alt=""
                     />
                   </div>
+                  <div class="device-state">
+                    <span>绿化浇灌阀</span>
+                    <strong class="error" v-if="swtchInfo.error10">故障</strong>
+                    <strong v-else-if="swtchInfo.reusePumpOperation10"
+                      >开位</strong
+                    >
+                    <strong v-else-if="swtchInfo.reusePumpOperation11"
+                      >关位</strong
+                    >
+                    <strong v-else>关闭</strong>
+                    <img
+                      v-if="swtchInfo.reusePumpOperation10"
+                      src="../assets/images/config/btn2-active.gif"
+                      alt=""
+                    />
+                    <img
+                      v-else
+                      src="../assets/images/config/btn-closed.png"
+                      alt=""
+                    />
+                  </div>
                 </div>
                 <div class="device-item">
                   <div class="device-state">
